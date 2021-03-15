@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Class-Path: services/usersdatabase-service-connection.jar
+  modules/databasemongo-module-connection.jar
+  lib/annotations-13.0.jar
+  lib/bson-4.1.1.jar
