@@ -81,7 +81,7 @@ public class UsersDatabaseMongoService extends AServiceType<IUsersDatabaseServic
         }
 
         @Override
-        public boolean userExistsByKey(String key, Object value) {
+        public boolean userExistsByKeyValue(String key, Object value) {
             return databaseConnectionSafe.getModuleConnection()
                     .countDocuments(
                             collectionName,
@@ -90,14 +90,17 @@ public class UsersDatabaseMongoService extends AServiceType<IUsersDatabaseServic
         }
 
         @Override
-        public long createUser(String name, Map<String, Object> keyValMap) {
-            Document userDoc = new Document();
-            ObjectId objectId = new ObjectId();
+        public long createUser(final Map<String, Object> keyValMap) {
+            final Document userDoc = new Document();
+            final ObjectId objectId = new ObjectId();
             userDoc.append("_id", objectId);
             userDoc.append(Consts.USER_ID, ByteBuffer.wrap(Arrays.copyOfRange(objectId.toByteArray(),
                     4, 12)).getLong());
+            for (final String key: keyValMap.keySet()){
+                userDoc.append(key, keyValMap.get(key));
+            }
 
-            InsertOneResult result = databaseConnectionSafe.getModuleConnection()
+            final InsertOneResult result = databaseConnectionSafe.getModuleConnection()
                     .insertDocument(collectionName, userDoc);
 
             if (!result.wasAcknowledged()) return -1;
